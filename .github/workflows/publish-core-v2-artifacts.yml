@@ -2,7 +2,15 @@ name: Publish Core V2 Android Artifacts
 
 on:
   workflow_dispatch:
-
+    inputs:
+      run_id:
+        description: Release Pipeline run containing Android artifacts
+        required: true
+        type: string
+      release_tag:
+        description: Existing release tag to upload artifacts to
+        required: true
+        type: string
 permissions:
   actions: read
   contents: write
@@ -16,7 +24,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          run-id: 30422859131
+          run-id: ${{ inputs.run_id }}
           name: MAAComponent-android-arm64
           path: release
 
@@ -25,11 +33,11 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          run-id: 30422859131
+          run-id: ${{ inputs.run_id }}
           name: MAAComponent-android-x64
           path: release
 
       - name: Publish fixed Core V2 release assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload core-v2-1d4432d release/*.tar.gz --clobber --repo Blood-meow/MaaAssistantArknights
+        run: gh release upload "${{ inputs.release_tag }}" release/*.tar.gz --clobber --repo "${{ github.repository }}"
