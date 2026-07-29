@@ -32,4 +32,4 @@ jobs:
       - name: Publish fixed Core V2 release assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload core-v2-1d4432d release/*.tar.gz --clobber
+        run: gh release upload core-v2-1d4432d release/*.tar.gz --clobber --repo Blood-meow/MaaAssistantArknights
