@@ -21,8 +21,6 @@ public:
     }
 
     StartGameTaskPlugin& set_client_type(std::string client_type) noexcept;
-    bool restart_game();
-
 protected:
     bool _run() override;
 
