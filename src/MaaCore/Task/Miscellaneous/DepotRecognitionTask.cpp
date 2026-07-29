@@ -41,22 +41,40 @@ bool asst::DepotRecognitionTask::analyze_basic_items()
     ctrler()->click(all_tab_result->rect);
     sleep(500);
 
-    DepotImageAnalyzer analyzer(ctrler()->get_image());
-    analyzer.set_item_ids({ "4002", "4003", "4001", "3003", "4006", "7003", "7004" });
-    // 源石、合成玉、龙门币、赤金、采购凭证（红票）、寻访凭证、十连寻访凭证
-    analyzer.set_is_basic(true);
-    if (!analyzer.analyze()) {
-        return false;
+    // 材料页扫描结束时列表停在最右侧。切换标签不会重置横向位置，
+    // 先把「全部」页拉回起点，否则只能识别尾部当前屏。
+    static constexpr int ResetSwipeTimes = 12;
+    for (int i = 0; i < ResetSwipeTimes; ++i) {
+        swipe_basic_items(false);
     }
 
-    const auto& result = analyzer.get_result();
-    for (const auto& [item_id, item_info] : result) {
-        m_all_items.emplace(item_id, item_info);
+    // 7003/7004 的 sortId 在 400xx 段，和首屏 100xx 基础货币相隔很远。
+    // 必须分页扫描；某一页没有目标物品也不能提前终止。
+    static constexpr int MaxBasicItemPages = 16;
+    static const std::vector<std::string> BasicItemIds = {
+        "4002", "4003", "4001", "3003", "4006", "7003", "7004"
+    };
+    bool recognized_any = false;
+    for (int page = 0; page < MaxBasicItemPages; ++page) {
+        DepotImageAnalyzer analyzer(ctrler()->get_image());
+        analyzer.set_item_ids(BasicItemIds);
+        analyzer.set_is_basic(true);
+        if (analyzer.analyze()) {
+            recognized_any = true;
+            for (const auto& [item_id, item_info] : analyzer.get_result()) {
+                m_all_items.insert_or_assign(item_id, item_info);
+            }
+            callback_analyze_result(false);
+        }
+
+        if (m_all_items.contains("7003") && m_all_items.contains("7004")) {
+            break;
+        }
+        swipe_basic_items(true);
     }
 
     DepotImageAnalyzer::clear_cached_templates();
-    callback_analyze_result(false);
-    return true;
+    return recognized_any;
 }
 
 bool asst::DepotRecognitionTask::swipe_and_analyze()
@@ -115,4 +133,9 @@ void asst::DepotRecognitionTask::callback_analyze_result(bool done)
 void asst::DepotRecognitionTask::swipe()
 {
     ProcessTask(*this, { "DepotSlowlySwipeToTheRight" }).run();
+}
+
+void asst::DepotRecognitionTask::swipe_basic_items(bool to_right)
+{
+    ProcessTask(*this, { to_right ? "DepotSlowlySwipeToTheRight" : "DepotSlowlySwipeToTheLeft" }).run();
 }
