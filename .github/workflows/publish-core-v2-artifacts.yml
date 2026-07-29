@@ -1,0 +1,35 @@
+name: Publish Core V2 Android Artifacts
+
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download arm64 artifact
+        uses: actions/download-artifact@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: 30422859131
+          name: MAAComponent-android-arm64
+          path: release
+
+      - name: Download x64 artifact
+        uses: actions/download-artifact@v8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: 30422859131
+          name: MAAComponent-android-x64
+          path: release
+
+      - name: Publish fixed Core V2 release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload core-v2-1d4432d release/*.tar.gz --clobber
