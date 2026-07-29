@@ -18,7 +18,7 @@ bool asst::DepotRecognitionTask::_run()
 
     bool ret = swipe_and_analyze();
 
-    // 材料页扫完后，切到「全部」标签页识别基础物品（源石、合成玉、龙门币、赤金、采购凭证）
+    // 材料页扫完后，切到「全部」标签页识别基础物品（含寻访凭证）
     ret &= analyze_basic_items();
 
     callback_analyze_result(true);
@@ -42,7 +42,8 @@ bool asst::DepotRecognitionTask::analyze_basic_items()
     sleep(500);
 
     DepotImageAnalyzer analyzer(ctrler()->get_image());
-    analyzer.set_item_ids({ "4002", "4003", "4001", "3003", "4006" }); // 源石 合成玉 龙门币 赤金 采购凭证（红票）
+    analyzer.set_item_ids({ "4002", "4003", "4001", "3003", "4006", "7003", "7004" });
+    // 源石、合成玉、龙门币、赤金、采购凭证（红票）、寻访凭证、十连寻访凭证
     analyzer.set_is_basic(true);
     if (!analyzer.analyze()) {
         return false;
