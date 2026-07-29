@@ -28,7 +28,7 @@ public:
     // 手动设置要识别的物品字典，不设置则默认使用 get_ordered_material_item_id
     void set_item_ids(std::vector<std::string> ids) noexcept { m_item_ids = std::move(ids); }
 
-    // 设置为 true 时，遇到匹配不到的槽位会跳过而不是中断（用于基础物品识别）
+    // 设置为 true 时，每个槽位独立匹配，遇到未知物品时继续扫描。
     void set_is_basic(bool is_basic) noexcept { m_is_basic = is_basic; }
 
     const auto& get_result() const noexcept { return m_result; }

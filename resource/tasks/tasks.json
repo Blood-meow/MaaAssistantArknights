@@ -4316,9 +4316,8 @@
         "algorithm": "JustReturn",
         "next": [
             "Depot",
-            "DepotMaterialTab",
             "DepotAllTab",
-            "DepotMaterialTabClicked",
+            "DepotAllTabSelected",
             "DepotBegin@QuickSwitch@ToHome#next",
             "Depot@ReturnButtons#next"
         ]
@@ -4328,12 +4327,16 @@
         "template": "SwitchTheme@ToggleSettingsMenu.png",
         "roi": [227, 327, 159, 152],
         "sub": ["Depot-Entry"],
-        "next": ["DepotMaterialTab"]
+        "next": ["DepotAllTab", "DepotAllTabSelected"]
     },
     "DepotAllTab": {
         "action": "ClickSelf",
-        "roi": [452, 0, 281, 134],
-        "next": ["DepotMaterialTab"]
+        "roi": [452, 0, 281, 134]
+    },
+    "DepotAllTabSelected": {
+        "baseTask": "DepotMaterialTab",
+        "action": "DoNothing",
+        "next": ["#next"]
     },
     "DepotMaterialTab": {
         "action": "ClickSelf",
@@ -4394,11 +4397,6 @@
         "baseTask": "SlowlySwipeToTheRight",
         "specificRect": [1150, 340, 20, 20],
         "rectMove": [110, 340, 20, 20]
-    },
-    "DepotSlowlySwipeToTheLeft": {
-        "baseTask": "SlowlySwipeToTheLeft",
-        "specificRect": [110, 340, 20, 20],
-        "rectMove": [1150, 340, 20, 20]
     },
     "OperBoxBegin": {
         "algorithm": "JustReturn",

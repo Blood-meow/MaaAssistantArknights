@@ -17,11 +17,8 @@ protected:
     virtual bool _run() override;
 
     bool swipe_and_analyze();
-    bool analyze_basic_items();
     void callback_analyze_result(bool done);
     void swipe();
-    void swipe_basic_items(bool to_right);
-
     std::unordered_map<std::string, ItemInfo> m_all_items;
 };
 }

@@ -190,7 +190,7 @@ bool asst::DepotImageAnalyzer::analyze_all_items()
             break;
         }
         ItemInfo info;
-        size_t cur_pos = match_item(roi, info, m_match_begin_pos);
+        size_t cur_pos = match_item(roi, info, m_is_basic ? 0ULL : m_match_begin_pos);
         if (cur_pos == NPos) {
             if (m_is_basic) {
                 continue; // 基础物品可能不连续，跳过空槽位
@@ -199,7 +199,10 @@ bool asst::DepotImageAnalyzer::analyze_all_items()
         }
         std::string item_id = info.item_id;
 
-        if (!m_is_basic) {
+        if (m_is_basic) {
+            m_match_begin_pos = std::max(m_match_begin_pos, cur_pos + 1);
+        }
+        else {
             m_match_begin_pos = cur_pos + 1;
         }
         info.quantity = match_quantity(info);
